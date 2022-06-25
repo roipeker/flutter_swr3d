@@ -16,21 +16,21 @@ class Edge {
   late double _lightAmt;
   late double _lightAmtStep;
 
-  double getX() => _x;
+  double get x => _x;
 
-  int getYStart() => _yStart;
+  int get yStart => _yStart;
 
-  int getYEnd() => _yEnd;
+  int get yEnd => _yEnd;
 
-  double getTexCoordX() => _texCoordX;
+  double get texCoordX => _texCoordX;
 
-  double getTexCoordY() => _texCoordY;
+  double get texCoordY => _texCoordY;
 
-  double getOneOverZ() => _oneOverZ;
+  double get oneOverZ => _oneOverZ;
 
-  double getDepth() => _depth;
+  double get depth => _depth;
 
-  double getLightAmt() => _lightAmt;
+  double get lightAmt => _lightAmt;
 
   Edge(
     Gradients gradients,
@@ -38,51 +38,51 @@ class Edge {
     Vertex maxYVert,
     int minYVertIndex,
   ) {
-    _yStart = minYVert.getY().ceil();
-    _yEnd = maxYVert.getY().ceil();
+    _yStart = minYVert.y.ceil();
+    _yEnd = maxYVert.y.ceil();
 
-    final yDist = maxYVert.getY() - minYVert.getY();
-    final xDist = maxYVert.getX() - minYVert.getX();
+    final yDist = maxYVert.y - minYVert.y;
+    final xDist = maxYVert.x - minYVert.x;
 
-    final yPrestep = _yStart - minYVert.getY();
+    final yPrestep = _yStart - minYVert.y;
     _xStep = xDist / yDist;
-    _x = minYVert.getX() + yPrestep * _xStep;
+    _x = minYVert.x + yPrestep * _xStep;
 
-    final xPrestep = _x - minYVert.getX();
+    final xPrestep = _x - minYVert.x;
 
     _texCoordX = gradients.getTexCoordX(minYVertIndex) +
-        gradients.getTexCoordXXStep() * xPrestep +
-        gradients.getTexCoordXYStep() * yPrestep;
+        gradients.texCoordXXStep * xPrestep +
+        gradients.texCoordXYStep * yPrestep;
 
     _texCoordXStep =
-        gradients.getTexCoordXYStep() + gradients.getTexCoordXXStep() * _xStep;
+        gradients.texCoordXYStep + gradients.texCoordXXStep * _xStep;
 
     _texCoordY = gradients.getTexCoordY(minYVertIndex) +
-        gradients.getTexCoordYXStep() * xPrestep +
-        gradients.getTexCoordYYStep() * yPrestep;
+        gradients.texCoordYXStep * xPrestep +
+        gradients.texCoordYYStep * yPrestep;
 
     _texCoordYStep =
-        gradients.getTexCoordYYStep() + gradients.getTexCoordYXStep() * _xStep;
+        gradients.texCoordYYStep + gradients.texCoordYXStep * _xStep;
 
     _oneOverZ = gradients.getOneOverZ(minYVertIndex) +
-        gradients.getOneOverZXStep() * xPrestep +
-        gradients.getOneOverZYStep() * yPrestep;
+        gradients.oneOverZXStep * xPrestep +
+        gradients.oneOverZYStep * yPrestep;
 
     _oneOverZStep =
-        gradients.getOneOverZYStep() + gradients.getOneOverZXStep() * _xStep;
+        gradients.oneOverZYStep + gradients.oneOverZXStep * _xStep;
 
     _depth = gradients.getDepth(minYVertIndex) +
-        gradients.getDepthXStep() * xPrestep +
-        gradients.getDepthYStep() * yPrestep;
+        gradients.depthXStep * xPrestep +
+        gradients.depthYStep * yPrestep;
 
-    _depthStep = gradients.getDepthYStep() + gradients.getDepthXStep() * _xStep;
+    _depthStep = gradients.depthYStep + gradients.depthXStep * _xStep;
 
     _lightAmt = gradients.getLightAmt(minYVertIndex) +
-        gradients.getLightAmtXStep() * xPrestep +
-        gradients.getLightAmtYStep() * yPrestep;
+        gradients.lightAmtXStep * xPrestep +
+        gradients.lightAmtYStep * yPrestep;
 
     _lightAmtStep =
-        gradients.getLightAmtYStep() + gradients.getLightAmtXStep() * _xStep;
+        gradients.lightAmtYStep + gradients.lightAmtXStep * _xStep;
   }
 
   void step() {

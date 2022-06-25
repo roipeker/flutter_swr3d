@@ -73,7 +73,7 @@ class MyRenderer {
     camera = Camera(
       Matrix4f().initPerspective(
         toRadians(70),
-        _frame.getWidth() / _frame.getHeight(),
+        _frame.width / _frame.height,
         0.1,
         1000,
       ),
@@ -134,7 +134,7 @@ class MyRenderer {
 
     camera.update(input, delta);
 
-    Matrix4f vp = camera.getViewProjection();
+    Matrix4f vp = camera.viewProjection;
 
     monkeyTransform = monkeyTransform.rotate(
       Quaternion.fromAxisAngle(const Vector4f(0, .5, 0), delta),
@@ -146,7 +146,7 @@ class MyRenderer {
     monkeyMesh?.draw(
       _frame,
       vp,
-      monkeyTransform.getTransformation(),
+      monkeyTransform.transformMatrix,
       brick2Texture,
     );
 
@@ -160,14 +160,14 @@ class MyRenderer {
     foxMesh?.draw(
       _frame,
       vp,
-      foxTransform.getTransformation(),
+      foxTransform.transformMatrix,
       foxTexture,
     );
 
     houseMesh?.draw(
       _frame,
       vp,
-      terrainTransform.getTransformation(),
+      terrainTransform.transformMatrix,
       brick2Texture,
     );
 

@@ -17,9 +17,9 @@ class Quaternion {
     double sinHalfAngle = math.sin(angle / 2);
     double cosHalfAngle = math.cos(angle / 2);
     return Quaternion(
-      axis.getX() * sinHalfAngle,
-      axis.getY() * sinHalfAngle,
-      axis.getZ() * sinHalfAngle,
+      axis.x * sinHalfAngle,
+      axis.y * sinHalfAngle,
+      axis.z * sinHalfAngle,
       cosHalfAngle,
     );
   }
@@ -100,35 +100,35 @@ class Quaternion {
   }
 
   Quaternion mulQuaternion(Quaternion r) {
-    double w_ = _w * r.getW() - _x * r.getX() - _y * r.getY() - _z * r.getZ();
-    double x_ = _x * r.getW() + _w * r.getX() + _y * r.getZ() - _z * r.getY();
-    double y_ = _y * r.getW() + _w * r.getY() + _z * r.getX() - _x * r.getZ();
-    double z_ = _z * r.getW() + _w * r.getZ() + _x * r.getY() - _y * r.getX();
+    double w_ = _w * r.w - _x * r.x - _y * r.y - _z * r.z;
+    double x_ = _x * r.w + _w * r.x + _y * r.z - _z * r.y;
+    double y_ = _y * r.w + _w * r.y + _z * r.x - _x * r.z;
+    double z_ = _z * r.w + _w * r.z + _x * r.y - _y * r.x;
 
     return Quaternion(x_, y_, z_, w_);
   }
 
   Quaternion mulVector4f(Vector4f r) {
-    double w_ = -_x * r.getX() - _y * r.getY() - _z * r.getZ();
-    double x_ = _w * r.getX() + _y * r.getZ() - _z * r.getY();
-    double y_ = _w * r.getY() + _z * r.getX() - _x * r.getZ();
-    double z_ = _w * r.getZ() + _x * r.getY() - _y * r.getX();
+    double w_ = -_x * r.x - _y * r.y - _z * r.z;
+    double x_ = _w * r.x + _y * r.z - _z * r.y;
+    double y_ = _w * r.y + _z * r.x - _x * r.z;
+    double z_ = _w * r.z + _x * r.y - _y * r.x;
 
     return Quaternion(x_, y_, z_, w_);
   }
 
   Quaternion sub(Quaternion r) {
     return Quaternion(
-        _x - r.getX(), _y - r.getY(), _z - r.getZ(), _w - r.getW());
+        _x - r.x, _y - r.y, _z - r.z, _w - r.w);
   }
 
   Quaternion add(Quaternion r) {
     return Quaternion(
-        _x + r.getX(), _y + r.getY(), _z + r.getZ(), _w + r.getW());
+        _x + r.x, _y + r.y, _z + r.z, _w + r.w);
   }
 
   double dot(Quaternion r) {
-    return _x * r.getX() + _y * r.getY() + _z * r.getZ() + _w * r.getW();
+    return _x * r.x + _y * r.y + _z * r.z + _w * r.w;
   }
 
   Quaternion nlerp(Quaternion dest, double lerpFactor, bool shortest) {
@@ -136,7 +136,7 @@ class Quaternion {
 
     if (shortest && dot(dest) < 0) {
       correctedDest =
-          Quaternion(-dest.getX(), -dest.getY(), -dest.getZ(), -dest.getW());
+          Quaternion(-dest.x, -dest.y, -dest.z, -dest.w);
     }
 
     return correctedDest.sub(this).mul(lerpFactor).add(this).normalized();
@@ -151,7 +151,7 @@ class Quaternion {
     if (shortest && cos < 0) {
       cos = -cos;
       correctedDest =
-          Quaternion(-dest.getX(), -dest.getY(), -dest.getZ(), -dest.getW());
+          Quaternion(-dest.x, -dest.y, -dest.z, -dest.w);
     }
 
     if (cos.abs() >= 1 - kEpsilon) {
@@ -168,37 +168,25 @@ class Quaternion {
     return mul(srcFactor).add(correctedDest.mul(destFactor));
   }
 
-  Vector4f getForward() {
-    return const Vector4f(0, 0, 1, 1).rotate(this);
-  }
+  Vector4f get forward => const Vector4f(0, 0, 1, 1).rotate(this);
 
-  Vector4f getBack() {
-    return const Vector4f(0, 0, -1, 1).rotate(this);
-  }
+  Vector4f get back => const Vector4f(0, 0, -1, 1).rotate(this);
 
-  Vector4f getUp() {
-    return const Vector4f(0, 1, 0, 1).rotate(this);
-  }
+  Vector4f get up => const Vector4f(0, 1, 0, 1).rotate(this);
 
-  Vector4f getDown() {
-    return const Vector4f(0, -1, 0, 1).rotate(this);
-  }
+  Vector4f get down => const Vector4f(0, -1, 0, 1).rotate(this);
 
-  Vector4f getRight() {
-    return const Vector4f(1, 0, 0, 1).rotate(this);
-  }
+  Vector4f get right => const Vector4f(1, 0, 0, 1).rotate(this);
 
-  Vector4f getLeft() {
-    return const Vector4f(-1, 0, 0, 1).rotate(this);
-  }
+  Vector4f get left => const Vector4f(-1, 0, 0, 1).rotate(this);
 
-  double getX() => _x;
+  double get x => _x;
 
-  double getY() => _y;
+  double get y => _y;
 
-  double getZ() => _z;
+  double get z => _z;
 
-  double getW() => _w;
+  double get w => _w;
 
   /// Compares two Quaternions for equality.
   @override
@@ -216,10 +204,6 @@ class Quaternion {
   @override
   String toString() =>
       'Quaternion(${_x.toStringAsFixed(1)}, ${_y.toStringAsFixed(1)}, ${_z.toStringAsFixed(1)}, ${_w.toStringAsFixed(1)})';
-
-  // bool equals(Quaternion r) {
-  //   return _x == r.getX() && _y == r.getY() && _z == r.getZ() && _w == r.getW();
-  // }
 
   Matrix4f toRotationMatrix() {
     Vector4f forward = Vector4f(

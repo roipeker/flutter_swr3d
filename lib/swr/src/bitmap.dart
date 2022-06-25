@@ -13,9 +13,9 @@ class Bitmap {
   Image? _lastFrame;
   final imagePaint = Paint();
 
-  int getWidth() => _width;
+  int get width => _width;
 
-  int getHeight() => _height;
+  int get height => _height;
 
   int getComponent(int index) {
     if (index >= _components.length) {
@@ -92,7 +92,7 @@ class Bitmap {
     double lightAmt,
   ) {
     int destIndex = (destX + destY * _width) * 4;
-    int srcIndex = (srcX + srcY * src.getWidth()) * 4;
+    int srcIndex = (srcX + srcY * src.width) * 4;
     if (destIndex < 0 || destIndex > _components.length) return;
 
     // lightAmt = -.2;

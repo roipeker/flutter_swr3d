@@ -7,16 +7,16 @@ class Gradients {
   final _depth = List<double>.filled(3, 0);
   final _lightAmt = List<double>.filled(3, 0);
 
-  late double _texCoordXXStep;
-  late double _texCoordXYStep;
-  late double _texCoordYXStep;
-  late double _texCoordYYStep;
-  late double _oneOverZXStep;
-  late double _oneOverZYStep;
-  late double _depthXStep;
-  late double _depthYStep;
-  late double _lightAmtXStep;
-  late double _lightAmtYStep;
+  late final double texCoordXXStep;
+  late final double texCoordXYStep;
+  late final double texCoordYXStep;
+  late final double texCoordYYStep;
+  late final double oneOverZXStep;
+  late final double oneOverZYStep;
+  late final double depthXStep;
+  late final double depthYStep;
+  late final double lightAmtXStep;
+  late final double lightAmtYStep;
 
   double getTexCoordX(int loc) => _texCoordX[loc];
 
@@ -28,109 +28,81 @@ class Gradients {
 
   double getLightAmt(int loc) => _lightAmt[loc];
 
-  double getTexCoordXXStep() => _texCoordXXStep;
-
-  double getTexCoordXYStep() => _texCoordXYStep;
-
-  double getTexCoordYXStep() => _texCoordYXStep;
-
-  double getTexCoordYYStep() => _texCoordYYStep;
-
-  double getOneOverZXStep() => _oneOverZXStep;
-
-  double getOneOverZYStep() => _oneOverZYStep;
-
-  double getDepthXStep() => _depthXStep;
-
-  double getDepthYStep() => _depthYStep;
-
-  double getLightAmtXStep() => _lightAmtXStep;
-
-  double getLightAmtYStep() => _lightAmtYStep;
-
-  double calcXStep(
+  double _calcXStep(
     List<double> values,
     Vertex minYVert,
     Vertex midYVert,
     Vertex maxYVert,
     double oneOverdX,
   ) {
-    return (((values[1] - values[2]) * (minYVert.getY() - maxYVert.getY())) -
-            ((values[0] - values[2]) * (midYVert.getY() - maxYVert.getY()))) *
+    return (((values[1] - values[2]) * (minYVert.y - maxYVert.y)) -
+            ((values[0] - values[2]) * (midYVert.y - maxYVert.y))) *
         oneOverdX;
   }
 
-  double calcYStep(
+  double _calcYStep(
     List<double> values,
     Vertex minYVert,
     Vertex midYVert,
     Vertex maxYVert,
     double oneOverdY,
   ) {
-    return (((values[1] - values[2]) * (minYVert.getX() - maxYVert.getX())) -
-            ((values[0] - values[2]) * (midYVert.getX() - maxYVert.getX()))) *
+    return (((values[1] - values[2]) * (minYVert.x - maxYVert.x)) -
+            ((values[0] - values[2]) * (midYVert.x - maxYVert.x))) *
         oneOverdY;
   }
 
-  double saturate(double val) {
-    if (val > 1.0) {
-      return 1.0;
-    }
-    if (val < 0.0) {
-      return 0.0;
-    }
-    return val;
+  double _saturate(double val) {
+    return val.clamp(0.0, 1.0);
   }
 
   Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert) {
     double oneOverdX = 1.0 /
-        (((midYVert.getX() - maxYVert.getX()) *
-                (minYVert.getY() - maxYVert.getY())) -
-            ((minYVert.getX() - maxYVert.getX()) *
-                (midYVert.getY() - maxYVert.getY())));
+        (((midYVert.x - maxYVert.x) * (minYVert.y - maxYVert.y)) -
+            ((minYVert.x - maxYVert.x) * (midYVert.y - maxYVert.y)));
 
     double oneOverdY = -oneOverdX;
 
-    _depth[0] = minYVert.getPosition().getZ();
-    _depth[1] = midYVert.getPosition().getZ();
-    _depth[2] = maxYVert.getPosition().getZ();
+    _depth[0] = minYVert.position.z;
+    _depth[1] = midYVert.position.z;
+    _depth[2] = maxYVert.position.z;
 
     Vector4f lightDir = const Vector4f(0, 0, 1);
-    _lightAmt[0] = saturate(minYVert.getNormal().dot(lightDir)) * 0.9 + 0.1;
-    _lightAmt[1] = saturate(midYVert.getNormal().dot(lightDir)) * 0.9 + 0.1;
-    _lightAmt[2] = saturate(maxYVert.getNormal().dot(lightDir)) * 0.9 + 0.1;
+    _lightAmt[0] = _saturate(minYVert.normal.dot(lightDir)) * 0.9 + 0.1;
+    _lightAmt[1] = _saturate(midYVert.normal.dot(lightDir)) * 0.9 + 0.1;
+    _lightAmt[2] = _saturate(maxYVert.normal.dot(lightDir)) * 0.9 + 0.1;
 
     // Note that the W component is the perspective Z value;
     // The Z component is the occlusion Z value
-    _oneOverZ[0] = 1.0 / minYVert.getPosition().getW();
-    _oneOverZ[1] = 1.0 / midYVert.getPosition().getW();
-    _oneOverZ[2] = 1.0 / maxYVert.getPosition().getW();
+    _oneOverZ[0] = 1.0 / minYVert.position.w;
+    _oneOverZ[1] = 1.0 / midYVert.position.w;
+    _oneOverZ[2] = 1.0 / maxYVert.position.w;
 
-    _texCoordX[0] = minYVert.getTexCoords().getX() * _oneOverZ[0];
-    _texCoordX[1] = midYVert.getTexCoords().getX() * _oneOverZ[1];
-    _texCoordX[2] = maxYVert.getTexCoords().getX() * _oneOverZ[2];
+    _texCoordX[0] = minYVert.texCoords.x * _oneOverZ[0];
+    _texCoordX[1] = midYVert.texCoords.x * _oneOverZ[1];
+    _texCoordX[2] = maxYVert.texCoords.x * _oneOverZ[2];
 
-    _texCoordY[0] = minYVert.getTexCoords().getY() * _oneOverZ[0];
-    _texCoordY[1] = midYVert.getTexCoords().getY() * _oneOverZ[1];
-    _texCoordY[2] = maxYVert.getTexCoords().getY() * _oneOverZ[2];
+    _texCoordY[0] = minYVert.texCoords.y * _oneOverZ[0];
+    _texCoordY[1] = midYVert.texCoords.y * _oneOverZ[1];
+    _texCoordY[2] = maxYVert.texCoords.y * _oneOverZ[2];
 
-    _texCoordXXStep =
-        calcXStep(_texCoordX, minYVert, midYVert, maxYVert, oneOverdX);
-    _texCoordXYStep =
-        calcYStep(_texCoordX, minYVert, midYVert, maxYVert, oneOverdY);
-    _texCoordYXStep =
-        calcXStep(_texCoordY, minYVert, midYVert, maxYVert, oneOverdX);
-    _texCoordYYStep =
-        calcYStep(_texCoordY, minYVert, midYVert, maxYVert, oneOverdY);
-    _oneOverZXStep =
-        calcXStep(_oneOverZ, minYVert, midYVert, maxYVert, oneOverdX);
-    _oneOverZYStep =
-        calcYStep(_oneOverZ, minYVert, midYVert, maxYVert, oneOverdY);
-    _depthXStep = calcXStep(_depth, minYVert, midYVert, maxYVert, oneOverdX);
-    _depthYStep = calcYStep(_depth, minYVert, midYVert, maxYVert, oneOverdY);
-    _lightAmtXStep =
-        calcXStep(_lightAmt, minYVert, midYVert, maxYVert, oneOverdX);
-    _lightAmtYStep =
-        calcYStep(_lightAmt, minYVert, midYVert, maxYVert, oneOverdY);
+    texCoordXXStep =
+        _calcXStep(_texCoordX, minYVert, midYVert, maxYVert, oneOverdX);
+    texCoordXYStep =
+        _calcYStep(_texCoordX, minYVert, midYVert, maxYVert, oneOverdY);
+    texCoordYXStep =
+        _calcXStep(_texCoordY, minYVert, midYVert, maxYVert, oneOverdX);
+    texCoordYYStep =
+        _calcYStep(_texCoordY, minYVert, midYVert, maxYVert, oneOverdY);
+    oneOverZXStep =
+        _calcXStep(_oneOverZ, minYVert, midYVert, maxYVert, oneOverdX);
+    oneOverZYStep =
+        _calcYStep(_oneOverZ, minYVert, midYVert, maxYVert, oneOverdY);
+    depthXStep = _calcXStep(_depth, minYVert, midYVert, maxYVert, oneOverdX);
+    depthYStep = _calcYStep(_depth, minYVert, midYVert, maxYVert, oneOverdY);
+    lightAmtXStep =
+        _calcXStep(_lightAmt, minYVert, midYVert, maxYVert, oneOverdX);
+    lightAmtYStep =
+        _calcYStep(_lightAmt, minYVert, midYVert, maxYVert, oneOverdY);
   }
 }

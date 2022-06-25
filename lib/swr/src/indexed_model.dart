@@ -39,18 +39,18 @@ class IndexedModel {
       Vector4f edge1 = _positions[i1].sub(_positions[i0]);
       Vector4f edge2 = _positions[i2].sub(_positions[i0]);
 
-      double deltaU1 = _texCoords[i1].getX() - _texCoords[i0].getX();
-      double deltaV1 = _texCoords[i1].getY() - _texCoords[i0].getY();
-      double deltaU2 = _texCoords[i2].getX() - _texCoords[i0].getX();
-      double deltaV2 = _texCoords[i2].getY() - _texCoords[i0].getY();
+      double deltaU1 = _texCoords[i1].x - _texCoords[i0].x;
+      double deltaV1 = _texCoords[i1].y - _texCoords[i0].y;
+      double deltaU2 = _texCoords[i2].x - _texCoords[i0].x;
+      double deltaV2 = _texCoords[i2].y - _texCoords[i0].y;
 
       double dividend = (deltaU1 * deltaV2 - deltaU2 * deltaV1);
       double f = dividend == 0 ? 0.0 : 1.0 / dividend;
 
       Vector4f tangent = Vector4f(
-          f * (deltaV2 * edge1.getX() - deltaV1 * edge2.getX()),
-          f * (deltaV2 * edge1.getY() - deltaV1 * edge2.getY()),
-          f * (deltaV2 * edge1.getZ() - deltaV1 * edge2.getZ()),
+          f * (deltaV2 * edge1.x - deltaV1 * edge2.x),
+          f * (deltaV2 * edge1.y - deltaV1 * edge2.y),
+          f * (deltaV2 * edge1.z - deltaV1 * edge2.z),
           0);
 
       _tangents[i0] = _tangents[i0].add(tangent);

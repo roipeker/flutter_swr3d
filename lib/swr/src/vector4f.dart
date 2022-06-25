@@ -1,5 +1,6 @@
 part of swr;
 
+/// A Vector4 that uses floats (double) components.
 class Vector4f {
   final double x, y, z, w;
 
@@ -19,14 +20,14 @@ class Vector4f {
 
   /// Returns the dot product of the Vector.
   double dot(Vector4f r) {
-    return x * r.getX() + y * r.getY() + z * r.getZ() + w * r.getW();
+    return x * r.x + y * r.y + z * r.z + w * r.w;
   }
 
   /// Returns the cross product of the Vector.
   Vector4f cross(Vector4f r) {
-    double x_ = y * r.getZ() - z * r.getY();
-    double y_ = z * r.getX() - x * r.getZ();
-    double z_ = x * r.getY() - y * r.getX();
+    double x_ = y * r.z - z * r.y;
+    double y_ = z * r.x - x * r.z;
+    double z_ = x * r.y - y * r.x;
 
     return Vector4f(x_, y_, z_, 0);
   }
@@ -58,7 +59,7 @@ class Vector4f {
   Vector4f rotateByQuaternion(Quaternion rotation) {
     Quaternion conjugate = rotation.conjugate();
     Quaternion w = rotation.mul(this).mul(conjugate);
-    return Vector4f(w.getX(), w.getY(), w.getZ(), 1.0);
+    return Vector4f(w.x, w.y, w.z, 1.0);
   }
 
   /// Returns the linear interpolation of this Vector4 with `dest`, with a ratio
@@ -92,7 +93,7 @@ class Vector4f {
   }
 
   Vector4f addVector4(Vector4f r) {
-    return Vector4f(x + r.getX(), y + r.getY(), z + r.getZ(), w + r.getW());
+    return Vector4f(x + r.x, y + r.y, z + r.z, w + r.w);
   }
 
   Vector4f addDouble(double r) {
@@ -100,7 +101,7 @@ class Vector4f {
   }
 
   Vector4f subVector4(Vector4f r) {
-    return Vector4f(x - r.getX(), y - r.getY(), z - r.getZ(), w - r.getW());
+    return Vector4f(x - r.x, y - r.y, z - r.z, w - r.w);
   }
 
   Vector4f subDouble(double r) {
@@ -108,7 +109,7 @@ class Vector4f {
   }
 
   Vector4f mulVector4(Vector4f r) {
-    return Vector4f(x * r.getX(), y * r.getY(), z * r.getZ(), w * r.getW());
+    return Vector4f(x * r.x, y * r.y, z * r.z, w * r.w);
   }
 
   Vector4f mulDouble(double r) {
@@ -116,7 +117,7 @@ class Vector4f {
   }
 
   Vector4f divVector4(Vector4f r) {
-    return Vector4f(x / r.getX(), y / r.getY(), z / r.getZ(), w / r.getW());
+    return Vector4f(x / r.x, y / r.y, z / r.z, w / r.w);
   }
 
   Vector4f divDouble(double r) {
@@ -132,23 +133,50 @@ class Vector4f {
     return "($x, $y, $z, $w)";
   }
 
-  double getX() {
-    return x;
-  }
-
-  double getY() {
-    return y;
-  }
-
-  double getZ() {
-    return z;
-  }
-
-  double getW() {
-    return w;
-  }
+  // double getX() {
+  //   return x;
+  // }
+  //
+  // double getY() {
+  //   return y;
+  // }
+  //
+  // double getZ() {
+  //   return z;
+  // }
+  //
+  // double getW() {
+  //   return w;
+  // }
 
   bool equals(Vector4f r) {
-    return x == r.getX() && y == r.getY() && z == r.getZ() && w == r.getW();
+    return x == r.x && y == r.y && z == r.z && w == r.w;
+  }
+
+  /// Compares two Vector4f for equality.
+  @override
+  bool operator ==(Object other) {
+    return other is Vector4f &&
+        other.x == x &&
+        other.y == y &&
+        other.z == z &&
+        other.w == w;
+  }
+
+  @override
+  int get hashCode => hashValues(x, y, z, w);
+
+  double operator [](int index) {
+    if (index == 0) {
+      return x;
+    } else if (index == 1) {
+      return y;
+    } else if (index == 2) {
+      return z;
+    } else if (index == 3) {
+      return w;
+    } else {
+      throw Exception('Index $index is out of bounds [0...3]');
+    }
   }
 }

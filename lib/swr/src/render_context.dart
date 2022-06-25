@@ -73,7 +73,7 @@ class RenderContext extends Bitmap {
     double previousComponent =
         previousVertex.get(componentIndex) * componentFactor;
     bool previousInside =
-        previousComponent <= previousVertex.getPosition().getW();
+        previousComponent <= previousVertex.position.w;
 
     Iterator<Vertex> it = vertices.iterator;
     while (it.moveNext()) {
@@ -81,13 +81,13 @@ class RenderContext extends Bitmap {
       double currentComponent =
           currentVertex.get(componentIndex) * componentFactor;
       bool currentInside =
-          currentComponent <= currentVertex.getPosition().getW();
+          currentComponent <= currentVertex.position.w;
 
       if (currentInside ^ previousInside) {
         double lerpAmt =
-            (previousVertex.getPosition().getW() - previousComponent) /
-                ((previousVertex.getPosition().getW() - previousComponent) -
-                    (currentVertex.getPosition().getW() - currentComponent));
+            (previousVertex.position.w - previousComponent) /
+                ((previousVertex.position.w - previousComponent) -
+                    (currentVertex.position.w - currentComponent));
 
         result.add(previousVertex.lerp(currentVertex, lerpAmt));
       }
@@ -109,7 +109,7 @@ class RenderContext extends Bitmap {
     Bitmap texture,
   ) {
     Matrix4f screenSpaceTransform =
-        Matrix4f().initScreenSpaceTransform(getWidth() / 2, getHeight() / 2);
+        Matrix4f().initScreenSpaceTransform(_width / 2, _height / 2);
     Matrix4f identity = Matrix4f().initIdentity();
     Vertex minYVert =
         v1.transform(screenSpaceTransform, identity).perspectiveDivide();
@@ -122,19 +122,19 @@ class RenderContext extends Bitmap {
       return;
     }
 
-    if (maxYVert.getY() < midYVert.getY()) {
+    if (maxYVert.y < midYVert.y) {
       Vertex temp = maxYVert;
       maxYVert = midYVert;
       midYVert = temp;
     }
 
-    if (midYVert.getY() < minYVert.getY()) {
+    if (midYVert.y < minYVert.y) {
       Vertex temp = midYVert;
       midYVert = minYVert;
       minYVert = temp;
     }
 
-    if (maxYVert.getY() < midYVert.getY()) {
+    if (maxYVert.y < midYVert.y) {
       Vertex temp = maxYVert;
       maxYVert = midYVert;
       midYVert = temp;
@@ -174,8 +174,8 @@ class RenderContext extends Bitmap {
       right = temp;
     }
 
-    int yStart = b.getYStart();
-    int yEnd = b.getYEnd();
+    int yStart = b.yStart;
+    int yEnd = b.yEnd;
     for (int j = yStart; j < yEnd; j++) {
       drawScanLine(gradients, left, right, j, texture);
       left.step();
@@ -190,9 +190,9 @@ class RenderContext extends Bitmap {
     int j,
     Bitmap texture,
   ) {
-    int xMin = left.getX().ceil();
-    int xMax = right.getX().ceil();
-    double xPrestep = xMin - left.getX();
+    int xMin = left.x.ceil();
+    int xMax = right.x.ceil();
+    double xPrestep = xMin - left.x;
 
 //		double xDist = right.GetX() - left.GetX();
 //		double texCoordXXStep = (right.GetTexCoordX() - left.GetTexCoordX())/xDist;
@@ -202,24 +202,24 @@ class RenderContext extends Bitmap {
 
     // Apparently, now that stepping is actually on pixel centers, gradients are
     // precise enough again.
-    double texCoordXXStep = gradients.getTexCoordXXStep();
-    double texCoordYXStep = gradients.getTexCoordYXStep();
-    double oneOverZXStep = gradients.getOneOverZXStep();
-    double depthXStep = gradients.getDepthXStep();
-    double lightAmtXStep = gradients.getLightAmtXStep();
+    double texCoordXXStep = gradients.texCoordXXStep;
+    double texCoordYXStep = gradients.texCoordYXStep;
+    double oneOverZXStep = gradients.oneOverZXStep;
+    double depthXStep = gradients.depthXStep;
+    double lightAmtXStep = gradients.lightAmtXStep;
 
-    double texCoordX = left.getTexCoordX() + texCoordXXStep * xPrestep;
-    double texCoordY = left.getTexCoordY() + texCoordYXStep * xPrestep;
-    double oneOverZ = left.getOneOverZ() + oneOverZXStep * xPrestep;
-    double depth = left.getDepth() + depthXStep * xPrestep;
-    double lightAmt = left.getLightAmt() + lightAmtXStep * xPrestep;
+    double texCoordX = left.texCoordX + texCoordXXStep * xPrestep;
+    double texCoordY = left.texCoordY + texCoordYXStep * xPrestep;
+    double oneOverZ = left.oneOverZ + oneOverZXStep * xPrestep;
+    double depth = left.depth + depthXStep * xPrestep;
+    double lightAmt = left.lightAmt + lightAmtXStep * xPrestep;
     for (int i = xMin; i < xMax; i++) {
-      int index = i + j * getWidth();
+      int index = i + j * _width;
       if (depth < _zBuffer[index]) {
         _zBuffer[index] = depth;
         double z = 1.0 / oneOverZ;
-        int srcX = ((texCoordX * z) * (texture.getWidth() - 1) + 0.5).toInt();
-        int srcY = ((texCoordY * z) * (texture.getHeight() - 1) + 0.5).toInt();
+        int srcX = ((texCoordX * z) * (texture.width - 1) + 0.5).toInt();
+        int srcY = ((texCoordY * z) * (texture.height - 1) + 0.5).toInt();
         copyPixel(i, j, srcX, srcY, texture, lightAmt);
       }
 

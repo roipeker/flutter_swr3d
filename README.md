@@ -3,5 +3,3 @@
 ## Getting Started
 
 Just clone the repo and run main.dart.
-
-

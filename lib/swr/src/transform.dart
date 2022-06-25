@@ -37,28 +37,28 @@ class Transform {
     ));
   }
 
-  Matrix4f getTransformation() {
+  Matrix4f get transformMatrix {
     final translationMatrix = Matrix4f().initTranslation(
-      _pos.getX(),
-      _pos.getY(),
-      _pos.getZ(),
+      _pos.x,
+      _pos.y,
+      _pos.z,
     );
     final rotationMatrix = _rot.toRotationMatrix();
     final scaleMatrix = Matrix4f().initScale(
-      _scale.getX(),
-      _scale.getY(),
-      _scale.getZ(),
+      _scale.x,
+      _scale.y,
+      _scale.z,
     );
     return translationMatrix.mul(rotationMatrix.mul(scaleMatrix));
   }
 
-  Vector4f getTransformedPos() => _pos;
+  Vector4f get transformedPos => _pos;
 
-  Quaternion getTransformedRot() => _rot;
+  Quaternion get transformedRot => _rot;
 
-  Vector4f getPos() => _pos;
+  Vector4f get pos => _pos;
 
-  Quaternion getRot() => _rot;
+  Quaternion get rot => _rot;
 
-  Vector4f getScale() => _scale;
+  Vector4f get scale => _scale;
 }

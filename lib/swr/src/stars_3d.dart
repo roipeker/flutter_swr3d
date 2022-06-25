@@ -72,8 +72,8 @@ class Stars3D {
     //Stars are drawn on a black background
     target.clear(0x80);
 
-    double halfWidth = target.getWidth() / 2.0;
-    double halfHeight = target.getHeight() / 2.0;
+    double halfWidth = target.width / 2.0;
+    double halfHeight = target.height / 2.0;
     int triangleBuilderCounter = 0;
 
     int x1 = 0;
@@ -108,9 +108,7 @@ class Stars3D {
 
       //If the star is not within range of the screen, then generate a
       //position for it.
-      if (x < 0 ||
-          x >= target.getWidth() ||
-          (y < 0 || y >= target.getHeight())) {
+      if (x < 0 || x >= target.width || (y < 0 || y >= target.height)) {
         initStar(i);
         continue;
       } else {

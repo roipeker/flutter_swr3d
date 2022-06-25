@@ -5,15 +5,15 @@ class Vertex {
   late Vector4f _texCoords;
   late Vector4f _normal;
 
-  double getX() => _pos.getX();
+  double get x => _pos.x;
 
-  double getY() => _pos.getY();
+  double get y => _pos.y;
 
-  Vector4f getPosition() => _pos;
+  Vector4f get position => _pos;
 
-  Vector4f getTexCoords() => _texCoords;
+  Vector4f get texCoords => _texCoords;
 
-  Vector4f getNormal() => _normal;
+  Vector4f get normal => _normal;
 
   /// Creates a new Vertex in a usable state.
   Vertex(Vector4f pos, Vector4f texCoords, [Vector4f normal = Vector4f.empty]) {
@@ -34,10 +34,10 @@ class Vertex {
   Vertex perspectiveDivide() {
     return Vertex(
       Vector4f(
-        _pos.getX() / _pos.getW(),
-        _pos.getY() / _pos.getW(),
-        _pos.getZ() / _pos.getW(),
-        _pos.getW(),
+        _pos.x / _pos.w,
+        _pos.y / _pos.w,
+        _pos.z / _pos.w,
+        _pos.w,
       ),
       _texCoords,
       _normal,
@@ -45,41 +45,47 @@ class Vertex {
   }
 
   double triangleAreaTimesTwo(Vertex b, Vertex c) {
-    double x1 = b.getX() - _pos.getX();
-    double y1 = b.getY() - _pos.getY();
+    double x1 = b.x - _pos.x;
+    double y1 = b.y - _pos.y;
 
-    double x2 = c.getX() - _pos.getX();
-    double y2 = c.getY() - _pos.getY();
+    double x2 = c.x - _pos.x;
+    double y2 = c.y - _pos.y;
 
     return (x1 * y2 - x2 * y1);
   }
 
   Vertex lerp(Vertex other, double lerpAmt) {
     return Vertex(
-      _pos.lerp(other.getPosition(), lerpAmt),
-      _texCoords.lerp(other.getTexCoords(), lerpAmt),
-      _normal.lerp(other.getNormal(), lerpAmt),
+      _pos.lerp(other._pos, lerpAmt),
+      _texCoords.lerp(other._texCoords, lerpAmt),
+      _normal.lerp(other._normal, lerpAmt),
     );
   }
 
   bool isInsideViewFrustum() {
-    return _pos.getX().abs() <= _pos.getW().abs() &&
-        _pos.getY().abs() <= _pos.getW().abs() &&
-        _pos.getZ().abs() <= _pos.getW().abs();
+    return _pos.x.abs() <= _pos.w.abs() &&
+        _pos.y.abs() <= _pos.w.abs() &&
+        _pos.z.abs() <= _pos.w.abs();
   }
 
+  /// Returns the position value by index.
   double get(int index) {
     switch (index) {
       case 0:
-        return _pos.getX();
+        return _pos.x;
       case 1:
-        return _pos.getY();
+        return _pos.y;
       case 2:
-        return _pos.getZ();
+        return _pos.z;
       case 3:
-        return _pos.getW();
+        return _pos.w;
       default:
         throw Exception('Index is out of bounds');
     }
+  }
+
+  // TODO: Maybe use storage List like Matrix4.
+  double operator [](int index) {
+    return _pos[index];
   }
 }
