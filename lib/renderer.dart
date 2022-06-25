@@ -36,8 +36,7 @@ class MyRenderer {
   late Transform monkeyTransform;
   late Transform terrainTransform;
   late Transform foxTransform;
-
-  // late Transform houseTransform;
+  late Transform houseTransform;
 
   late Camera camera;
 
@@ -92,10 +91,14 @@ class MyRenderer {
     terrainTransform = Transform(
       const Vector4f(0, -1, 1.9),
     );
+
+    houseTransform = Transform(
+      const Vector4f(0, -1, 12),
+    );
+
     foxTransform = Transform(
       const Vector4f(0.4, -.8, -5.9),
       null,
-
       /// scale down the fox
       const Vector4f(.1, .1, .1),
     );
@@ -150,12 +153,12 @@ class MyRenderer {
       brick2Texture,
     );
 
-    // terrainMesh?.Draw(
-    //   _frame,
-    //   vp,
-    //   terrainTransform.GetTransformation(),
-    //   brick1Texture,
-    // );
+    terrainMesh?.draw(
+      _frame,
+      vp,
+      terrainTransform.transformMatrix,
+      brick1Texture,
+    );
 
     foxMesh?.draw(
       _frame,
@@ -167,7 +170,7 @@ class MyRenderer {
     houseMesh?.draw(
       _frame,
       vp,
-      terrainTransform.transformMatrix,
+      houseTransform.transformMatrix,
       brick2Texture,
     );
 
